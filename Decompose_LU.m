@@ -12,7 +12,7 @@ L = eye(n);
 U = zeros(n);
 for k = 1:n-1
     p = max(abs(A(k:n,k)));
-    p = find(A(k:n,k)==p(1));
+    p = find(abs(A(k:n,k))==p(1));
     p = p(1) + k - 1;
     if p~= k
         A(k,:) = A(k,:) + A(p,:);
