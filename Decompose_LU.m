@@ -1,11 +1,11 @@
 function [L, U, P] = Decompose_LU(A)
-%ʹ������Ԫ������LU����ֽ�
-%   A ����
+%使用列主元法进行LU矩阵分解
+%   A 方阵
 %[L, U, P] = Decompose_LU(A)
-%����ֵ:
-%   L ����Ǿ���
-%   U ����Ǿ���,��Խ�����Ϊ D
-%   P �û�����
+%返回值:
+%   L 下三角矩阵
+%   U 上三角矩阵,其对角线上为 D
+%   P 置换矩阵
 n = length(A);
 P = eye(n);
 L = zeros(n);
@@ -21,7 +21,7 @@ for k = 1:n-1
         L(k,:) = L(k,:) + L(p,:);
         L(p,:) = L(k,:) - L(p,:);
         L(k,:) = L(k,:) - L(p,:);
-        % ͬʱ����P
+        % 同时交换P
         P(k,:) = P(k,:) + P(p,:);
         P(p,:) = P(k,:) - P(p,:);
         P(k,:) = P(k,:) - P(p,:);
@@ -30,7 +30,7 @@ for k = 1:n-1
         A(k+1:n,k) = A(k+1:n,k)/A(k,k);
         A(k+1:n,k+1:n) = A(k+1:n,k+1:n) - A(k+1:n,k)*A(k,k+1:n);
     else
-        disp('����A����!')
+        disp('矩阵A奇异！')
         pause
     end
 end
