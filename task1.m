@@ -17,10 +17,7 @@ for n = 5:50
     k = Estimate_Matrix_Condition_Modinf(createHilbert(n),10);
     fprintf(1,'cond(Hilbert[%d], inf) =\t%f\n',n,k);
 end
-b = zeros(30,1);
-for i = 1:30
-    b(i) = random('norm',2,1);
-end
+b = random('norm',2,1,30,1);
 for n = 5:30
     A = createAn(n);
     x = Solve_Gauss(A, b(1:n));
