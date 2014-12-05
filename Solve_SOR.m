@@ -14,9 +14,12 @@ function [ X ] = Solve_SOR( A, b, x0, w, e )
     g = w*((D-w*L)\b);
     x = x0';
     X = M*x + g;
+    k = 0;
     while norm(X-x, inf)>e
+        k = k + 1;
+        if k > 100000; disp('SOR 超过最大允许迭代次数!');break;  end
         x = X;
-        X = M*x + g
+        X = M*x + g;
     end
 end
 

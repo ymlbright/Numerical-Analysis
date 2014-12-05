@@ -5,7 +5,8 @@ function [X] = Solve_U(U, b)
 %   b 方程组右端值
 %返回值:
 %   X 方程组的解
-n = length(U);
+[m,n] = size(U);
+n = min([m n]);
 for j = n:-1:2
     b(j) = b(j)/U(j,j);
     b(1:j-1) = b(1:j-1) - b(j)*U(1:j-1,j);

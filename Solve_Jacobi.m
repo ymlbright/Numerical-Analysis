@@ -13,7 +13,10 @@ function [ X ] = Solve_Jacobi( A, b, x0, e )
     g = D\b;
     x = x0';
     X = M*x + g;
+    k = 0;
     while norm(X-x, inf)>e
+        k = k + 1;
+        if k > 100000; disp('Jacobi 超过最大允许迭代次数!');break;  end
         x = X;
         X = M*x + g;
     end

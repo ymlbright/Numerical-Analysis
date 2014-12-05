@@ -1,0 +1,102 @@
+function task2()
+    %p99_1()
+    %p99_2()
+    %p99_3()
+    [x,y,z]=p137_1(1);
+    [x,y,z]
+    [x,y,z]=p137_1(0.1);
+    [x,y,z]
+    [x,y,z]=p137_1(0.01);
+    [x,y,z]
+    [x,y,z]=p137_1(0.0001);
+    [x,y,z]
+end
+
+function [A] = createTriDiag(d, e, f, n)
+    A = zeros(n);
+    for i = 1:n
+        A(i,i) = e(i);
+        if i<n ; A(i,i+1) = f(i); end
+        if i>1 ; A(i,i-1) = d(i-1); end
+    end
+end
+
+
+function [A] = createHilbert(n)
+    A = zeros(n,n);
+    for i = 1:n
+        for j  = i:n
+            A(i,j) = 1/(i+j-1);
+            A(j,i) = A(i,j);
+        end
+    end
+end
+
+function p99_1()
+    d = 8*ones(83,1);
+    e = 6*ones(84,1);
+    f = 1*ones(83,1);
+    A = createTriDiag(d, e, f, 84);
+    b = 15*ones(84,1);
+    b(1) = 7;
+    b(84) = 14;
+    result = zeros(84,2);
+    result(:,1) = Solve_Gauss(A, b);
+    result(:,2) = Solve_QR(A, b);
+    norm(result(:,1)-1)
+    norm(result(:,2)-1)
+    
+    d = 1*ones(99,1);
+    e = 10*ones(100,1);
+    f = 1*ones(99,1);
+    A = createTriDiag(d, e, f, 100);
+    b = rand(100,1);
+    result = zeros(100,3);
+    result(:,1) = Solve_Gauss(A, b);
+    result(:,2) = Solve_QR(A, b);
+    result(:,3) =  result(1:100,1) -  result(1:100,2);
+    result
+    
+    b = zeros(40,1);
+    A = createHilbert(40);
+    for i = 1:40
+        b(i) = sum(A(i,:));
+    end
+    result = zeros(40,2);
+    result(:,1) = Solve_Gauss(A, b);
+    result(:,2) = Solve_QR(A, b);
+    norm(result(:,1)-1)
+    norm(result(:,2)-1)
+end
+
+function p99_2()
+    t = -1:0.25:0.75;
+    y = [1 0.8125 0.75 1 1.3125 1.75 2.3125]';
+    A = zeros(7,3);
+    for i = 1:7
+        A(i,:) = [t(i)^2 t(i) 1];
+    end
+    Solve_QR(A,y)
+end
+
+function p99_3()
+    A = rand(28,12);
+    A(:,1) = ones(28,1);
+    b = rand(28,1);
+    Solve_QR(A,b)
+end
+
+function [x, y, z] = p137_1(yipilo)
+    n = 100;
+    h = 1/n;
+    
+    d = (yipilo+h)*ones(n-1,1);
+    e = -(2*yipilo + h)*ones(n,1);
+    f = yipilo*ones(n-1,1);
+    A = createTriDiag(d, e, f, n);
+    b = (0.5*h^2)*ones(n,1);
+    X = rand(1,n);
+    x = Solve_Jacobi(A,b,X,0.00000001);
+    y = Solve_GaussSeidel(A,b,X,0.00000001);
+    z = Solve_SOR(A,b,X,1.6,0.00000001);
+end
