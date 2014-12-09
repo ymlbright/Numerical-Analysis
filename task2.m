@@ -1,15 +1,65 @@
 function task2()
+    %p98_6(2,3,5)
+    p98_11(5)
     %p99_1()
     %p99_2()
     %p99_3()
-    [x,y,z]=p137_1(1);
-    [x,y,z]
-    [x,y,z]=p137_1(0.1);
-    [x,y,z]
-    [x,y,z]=p137_1(0.01);
-    [x,y,z]
-    [x,y,z]=p137_1(0.0001);
-    [x,y,z]
+%     [x,y,z]=p137_1(1);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.1);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.01);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.0001);
+%     [x,y,z]
+
+end
+
+function p98_6(i, k, n)
+    [c,s] = Solve_Givens(0,1);
+    A = eye(n);
+    A(i,i) = c;
+    A(i,k) = -s;
+    A(k,i) = s;
+    A(k,k) = c;
+    x = zeros(n,1);
+    y = x;
+    x(i) = 1;
+    y(k) = 1;
+    A*x-y
+end
+
+function p98_11(n)
+    A = eye(n);
+    A(1,2:n) = rand(1,n-1);
+    A(2:n,1) = rand(n-1,1);
+    Q = eye(n);
+    B = A;
+    for i = 1:n-1
+        [D,A(i:n,i:n)] = p98_11_p(A(i:n,i:n));
+        H = eye(n);
+        H(i:n,i:n) = D;
+        Q = H*Q;
+    end
+    Q*B - A
+end
+
+
+    
+
+function [Q, A] = p98_11_p(A)
+    n = length(A);
+    Q = eye(n);
+    for i = 2:n
+        [c, s] = Solve_Givens(A(1,1),A(i,1));
+        D = eye(n);
+        D(1,1) = c;
+        D(1,i) = s;
+        D(i,1) = -s;
+        D(i,i) = c;
+        A = D*A
+        Q = D*Q;
+    end
 end
 
 function [A] = createTriDiag(d, e, f, n)
