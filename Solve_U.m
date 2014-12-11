@@ -8,9 +8,13 @@ function [X] = Solve_U(U, b)
 [m,n] = size(U);
 n = min([m n]);
 for j = n:-1:2
-    b(j) = b(j)/U(j,j);
+    if U(j,j)==0
+        b(j) = 0;
+    else
+        b(j) = b(j)/U(j,j);
+    end
     b(1:j-1) = b(1:j-1) - b(j)*U(1:j-1,j);
 end
 b(1) = b(1)/U(1,1);
-X = b;
+X = b(1:n);
 end

@@ -1,18 +1,18 @@
 function task2()
     clc
-    %p98_6(2,3,5)
-    %p98_11(5)
-%     p99_1()
-%     p99_2()
-%     p99_3()
-    [x,y,z]=p137_1(1);
-    [x,y,z]
-    [x,y,z]=p137_1(0.1);
-    [x,y,z]
-    [x,y,z]=p137_1(0.01);
-    [x,y,z]
-    [x,y,z]=p137_1(0.0001);
-    [x,y,z]
+    %p98_6(13,5,30)
+    %p98_11(30)
+    %p99_1()
+     p99_2()
+     p99_3()
+%     [x,y,z]=p137_1(1);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.1);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.01);
+%     [x,y,z]
+%     [x,y,z]=p137_1(0.0001);
+%     [x,y,z]
 
 end
 
@@ -27,7 +27,8 @@ function p98_6(i, k, n)
     y = x;
     x(i) = 1;
     y(k) = 1;
-    A*x-y
+    norm(A'*A-eye(n))
+    norm(A*x-y)
 end
 
 function p98_11(n)
@@ -42,7 +43,8 @@ function p98_11(n)
         H(i:n,i:n) = D;
         Q = H*Q;
     end
-    Q*B - A
+    norm(Q'*A - B)
+    norm(Q'*Q - eye(n))
 end
 
 
@@ -102,22 +104,20 @@ function p99_1()
     f = 1*ones(99,1);
     A = createTriDiag(d, e, f, 100);
     b = rand(100,1);
-    result = zeros(100,3);
-    result(:,1) = Solve_Gauss(A, b);
-    result(:,2) = Solve_QR(A, b);
-    result(:,3) =  result(1:100,1) -  result(1:100,2);
-    result
+    x1 = Solve_Cholesky(A, b);
+    x2 = Solve_QR(A, b);
+    norm(A*x1-b)
+    norm(A*x2-b)
     
     b = zeros(40,1);
     A = createHilbert(40);
     for i = 1:40
         b(i) = sum(A(i,:));
     end
-    result = zeros(40,2);
-    result(:,1) = Solve_Gauss(A, b);
-    result(:,2) = Solve_QR(A, b);
-    norm(result(:,1)-1)
-    norm(result(:,2)-1)
+    x1 = Solve_Cholesky(A, b);
+    x2 = Solve_QR(A, b);
+    norm(A*x1-b)
+    norm(A*x2-b)
 end
 
 function p99_2()
@@ -146,8 +146,10 @@ function [x, y, z] = p137_1(yipilo)
     f = yipilo*ones(n-1,1);
     A = createTriDiag(d, e, f, n);
     b = (0.5*h^2)*ones(n,1);
+    x = 0:h:1-h;
+    y = 0.5*(1-exp(-x./yipilo))/(1-exp(-1/yipilo))+0.5*x;
     X = rand(1,n);
-    x = Solve_Jacobi(A,b,X,0.00000001);
-    y = Solve_GaussSeidel(A,b,X,0.00000001);
-    z = Solve_SOR(A,b,X,1.6,0.00000001);
+    x = norm(Solve_Jacobi(A,b,X,0.00000001)-y');
+    y = norm(Solve_GaussSeidel(A,b,X,0.00000001)-y');
+    z = norm(Solve_SOR(A,b,X,1.1,0.00000001)-y');
 end
