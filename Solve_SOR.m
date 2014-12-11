@@ -10,12 +10,12 @@ function [ X ] = Solve_SOR( A, b, x0, w, e )
 %   X 方程组的解
     n = length(A);
     [L, D, U] = ToLDU(A, n);
-    M = (D-w*L)\((1-w)*D+w*U);
-    g = w*((D-w*L)\b);
+    M = (D-w.*L)\((1-w).*D+w.*U);
+    g = w*((D-w.*L)\b);
     x = x0';
     X = M*x + g;
     k = 0;
-    while norm(X-x, inf)>e
+    while norm(X-x, 2)>e
         k = k + 1;
         if k > 100000; disp('SOR 超过最大允许迭代次数!');break;  end
         x = X;

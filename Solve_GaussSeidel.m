@@ -14,7 +14,7 @@ function [ X ] = Solve_GaussSeidel( A, b, x0, e )
     x = x0';
     X = M*x + g;
     k = 0;
-    while norm(X-x, inf)>e
+    while norm(X-x, 2)>e
         k = k + 1;
         if k > 100000; disp('GaussSeidel 超过最大允许迭代次数!');break;  end
         x = X;

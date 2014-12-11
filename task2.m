@@ -3,16 +3,16 @@ function task2()
     %p98_6(13,5,30)
     %p98_11(30)
     %p99_1()
-     p99_2()
-     p99_3()
-%     [x,y,z]=p137_1(1);
-%     [x,y,z]
-%     [x,y,z]=p137_1(0.1);
-%     [x,y,z]
-%     [x,y,z]=p137_1(0.01);
-%     [x,y,z]
-%     [x,y,z]=p137_1(0.0001);
-%     [x,y,z]
+    %p99_2()
+    %p99_3()
+    [x,y,z]=p137_1(1);
+    [x,y,z]
+    [x,y,z]=p137_1(0.1);
+    [x,y,z]
+    [x,y,z]=p137_1(0.01);
+    [x,y,z]
+    [x,y,z]=p137_1(0.0001);
+    [x,y,z]
 
 end
 
@@ -147,9 +147,9 @@ function [x, y, z] = p137_1(yipilo)
     A = createTriDiag(d, e, f, n);
     b = (0.5*h^2)*ones(n,1);
     x = 0:h:1-h;
-    y = 0.5*(1-exp(-x./yipilo))/(1-exp(-1/yipilo))+0.5*x;
+    Y = 0.5*(1-exp(-x./yipilo))/(1-exp(-1/yipilo))+0.5*x;
     X = rand(1,n);
-    x = norm(Solve_Jacobi(A,b,X,0.00000001)-y');
-    y = norm(Solve_GaussSeidel(A,b,X,0.00000001)-y');
-    z = norm(Solve_SOR(A,b,X,1.1,0.00000001)-y');
+    x = norm(Solve_Jacobi(A,b,X,0.00001)-Y');
+    y = norm(Solve_GaussSeidel(A,b,X,0.00001)-Y');
+    z = norm(Solve_SOR(A,b,X,1+0.5*yipilo,0.00001)-Y');
 end
