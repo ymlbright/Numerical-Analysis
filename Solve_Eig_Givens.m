@@ -1,10 +1,11 @@
-function [ E ] = Solve_Eig_Givens( A, e )
+function [ E, I ] = Solve_Eig_Givens( A, e )
 % 使用上 Hessenberg 分解, Givens 变化求解 A 的特征值
 %[ E ] = Solve_Eig_Givens( A )
 %   A 方阵
 %   e 精度
 %返回值
-%   E 相似上三角矩阵
+%   E 特征值列向量
+%   I 特征对应的特征向量(行与E对应)
 
 n = length(A);
 for k = 1:n-2
@@ -24,6 +25,25 @@ while norm(C-c,Inf)>e
     E = Special_Givens(E,n);
     c = Get_Tril(E,n);
 end
+
+k = 1;
+I = zeros(n);
+while k<n
+    if abs(E(k+1,k)) > e
+        b = E(k,k)+E(k+1,k+1);
+        E(k,k) = (b+sqrt(b^2-4*(E(k,k)*E(k+1,k+1)-E(k,k+1)*E(k+1,k))))/2;
+        E(k+1,k+1) = conj(E(k,k));
+        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+        k = k + 1;
+        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+        k = k + 1;
+    else
+        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+        k = k + 1;
+    end
+end
+E = diag(E);
+
 
 end
 
