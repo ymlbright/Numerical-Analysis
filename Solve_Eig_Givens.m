@@ -5,46 +5,46 @@ function [ E, I ] = Solve_Eig_Givens( A, e )
 %   e 精度
 %返回值
 %   E 特征值列向量
-%   I 特征对应的特征向量(行与E对应)
+%   I 特征值对角阵(与E列对应)
 
 n = length(A);
+T = A;
 for k = 1:n-2
-    [v,b] = Solve_Householder(A(k+1:n,k));
+    [v,b] = Solve_Householder(T(k+1:n,k));
     H = eye(n-k) - b*v'*v;
-    A(k+1:n,k:n) = H*A(k+1:n,k:n);
-    A(1:n,k+1:n) = A(1:n,k+1:n)*H;
+    T(k+1:n,k:n) = H*T(k+1:n,k:n);
+    T(1:n,k+1:n) = T(1:n,k+1:n)*H;
 end
-C = Get_Tril(A,n);
-E = Special_Givens(A,n);
-c = Get_Tril(E,n);
+C = Get_Tril(T,n);
+T = Special_Givens(T,n);
+c = Get_Tril(T,n);
 k = 0;
+
 while norm(C-c,Inf)>e
     k = k + 1;
-    if k>50000; disp('Givens 求解特征值迭代次数超过最大限制!'); break; end
+    if k>5000; break; end
     C = c;
-    E = Special_Givens(E,n);
-    c = Get_Tril(E,n);
+    T = Special_Givens(T,n);
+    c = Get_Tril(T,n);
 end
-
 k = 1;
+E = zeros(n);
 I = zeros(n);
 while k<n
-    if abs(E(k+1,k)) > e
-        b = E(k,k)+E(k+1,k+1);
-        E(k,k) = (b+sqrt(b^2-4*(E(k,k)*E(k+1,k+1)-E(k,k+1)*E(k+1,k))))/2;
-        E(k+1,k+1) = conj(E(k,k));
-        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+    if abs(T(k+1,k)) > e
+        b = T(k,k)+T(k+1,k+1);
+        I(k,k) = (b+sqrt(b^2-4*(T(k,k)*T(k+1,k+1)-T(k,k+1)*T(k+1,k))))/2;
+        I(k+1,k+1) = conj(I(k,k));
+        [l,E(:,k)] = Solve_BackwardPowerMethod(A,I(k,k)-e,e);
         k = k + 1;
-        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+        [l,E(:,k)] = Solve_BackwardPowerMethod(A,I(k,k)-e,e);
         k = k + 1;
     else
-        %[l,I(k,:)] = Solve_BackwardPowerMethod(E,E(k,k),e);
+        [I(k,k),E(:,k)] = Solve_BackwardPowerMethod(A,T(k,k)-e,e);
         k = k + 1;
     end
 end
-E = diag(E);
-
-
+if k==n; [I(k,k),E(:,k)] = Solve_BackwardPowerMethod(A,T(k,k)-e,e); end
 end
 
 function [ B ] = Special_Givens( A, n )
@@ -66,5 +66,15 @@ function [c] = Get_Tril( A, n )
     c = zeros(n-1,1);
     for i = 1:n-1
         c(i) = A(i+1,i);
+    end
+end
+
+function tester()
+    n = 5;
+    A = rand(n);
+    [E,I] = Solve_Eig_Givens(A,0.0000001);
+    diag(I)
+    for i = 1:n
+        disp(norm(A*E(:,i)-I(i,i)*E(:,i)));
     end
 end
