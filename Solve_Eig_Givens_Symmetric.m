@@ -1,7 +1,7 @@
-function [ E, I ] = Solve_Eig_Givens( A, e )
+function [ E, I ] = Solve_Eig_Givens_Symmetric( A, e )
 % 使用上 Hessenberg 分解, Givens 变化求解 A 的特征值
-%[ E, I ] = Solve_Eig_Givens( A )
-%   A 方阵
+%[ E, I ] = Solve_Eig_Givens_Symmetric( A, e )
+%   A 对称方阵
 %   e 精度
 %返回值
 %   E 特征值列向量
@@ -11,10 +11,16 @@ n = length(A);
 T = A;
 for k = 1:n-2
     [v,b] = Solve_Householder(T(k+1:n,k));
-    H = eye(n-k) - b*v'*v;
-    T(k+1:n,k:n) = H*T(k+1:n,k:n);
-    T(1:n,k+1:n) = T(1:n,k+1:n)*H;
+    v = v';
+    u = b*T(k+1:n,k+1:n)*v;
+    w = u - (b*u'*v/2)*v;
+    T(k+1,k) = norm(T(k+1:n,k));
+    T(k,k+1) = T(k+1,k);
+    T(k+1:n,k+1:n) = T(k+1:n,k+1:n) - v*w' - w*v';
+    T(k+2:n,k) = 0;
+    T(k,k+2:n) = 0;
 end
+
 C = Get_Tril(T,n);
 T = Special_Givens(T,n);
 c = Get_Tril(T,n);
@@ -72,7 +78,8 @@ end
 function tester()
     n = 5;
     A = rand(n);
-    [E,I] = Solve_Eig_Givens(A,0.0000001);
+    A = A'*A;
+    [E,I] = Solve_Eig_Givens_Symmetric(A,0.0000001);
     diag(I)
     for i = 1:n
         disp(norm(A*E(:,i)-I(i,i)*E(:,i)));
