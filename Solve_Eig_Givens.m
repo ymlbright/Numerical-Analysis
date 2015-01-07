@@ -36,9 +36,8 @@ while k<n
         I(k,k) = (b+sqrt(b^2-4*(T(k,k)*T(k+1,k+1)-T(k,k+1)*T(k+1,k))))/2;
         I(k+1,k+1) = conj(I(k,k));
         [l,E(:,k)] = Solve_BackwardPowerMethod(A,I(k,k)-e,e);
-        k = k + 1;
-        [l,E(:,k)] = Solve_BackwardPowerMethod(A,I(k,k)-e,e);
-        k = k + 1;
+        E(:,k+1) = conj(E(:,k));
+        k = k + 2;
     else
         [I(k,k),E(:,k)] = Solve_BackwardPowerMethod(A,T(k,k)-e,e);
         k = k + 1;
