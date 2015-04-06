@@ -5,7 +5,7 @@ function [X] = Solve_Chasing(d, e, f, b)
 % f     系数矩阵超对角线系数(列向量)
 % b     右端向量
 %返回值
-% X     方程组的解
+% X     方程组的解 
 n = length(b);
 X = zeros(n,1);
 for i = 2:n
